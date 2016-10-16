@@ -1,1 +1,9 @@
 GET                   /        controllers.RootController.index
+
+POST                  /submit  controllers.RootController.submit
+
+GET                   /stats  controllers.RootController.statsIndex
+GET                   /statsData  controllers.RootController.statsData
+
+GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+

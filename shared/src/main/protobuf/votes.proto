@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package votes;
+
+message Vote {
+  int32 age = 1;
+
+  enum Language {
+    CPP = 0;
+    VBSCRIPT = 1;
+    PHP = 3;
+  }
+
+  Language language = 2;
+
+  string user_id = 3;
+}
+
+message Aggregate {
+  message Item {
+    Vote.Language language = 1;
+    int32 age = 2;
+    int32 count = 3;
+  }
+  repeated Item items = 1;
+}
