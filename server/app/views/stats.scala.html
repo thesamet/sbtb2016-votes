@@ -3,8 +3,16 @@
     <head>
     </head>
     <body>
-      <div id="target"></div>
-      <canvas id="myChart" width="400" height="400"></canvas>
+      <div style="position: fixed; left: 0%; top: 0; width: 30%; height: 100%">
+        <img src="http://chart.googleapis.com/chart?cht=qr&chs=500x500&choe=UTF-8&chld=H&chl=https://goo.gl/1XdPL5" style="width: 100%">
+        <div style="position: fixed; bottom: 25px; left: 15px">
+          <label>r-factor: </label>
+          <input type="number" id="rfactor" value="15">
+        </div>
+      </div>
+      <div style="position: fixed; left: 30%; top: 0; width: 70%; height: 100%">
+        <canvas id="myChart"></canvas>
+      </div>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.3.0/Chart.min.js" type="text/javascript"></script>
       @scalajs.html.scripts("client", routes.Assets.versioned(_).toString, name => getClass.getResource(s"/public/$name") != null)
       <script>votes.Stats().main()</script>

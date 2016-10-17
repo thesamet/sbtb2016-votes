@@ -8,7 +8,8 @@ message Vote {
   enum Language {
     CPP = 0;
     VBSCRIPT = 1;
-    PHP = 3;
+    PHP = 2;
+    PYTHON = 3;
   }
 
   Language language = 2;

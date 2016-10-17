@@ -1,32 +1,43 @@
 package controllers
 
-import java.nio.ByteBuffer
 import java.util.UUID
 
-import com.amazonaws.services.kinesis.producer.{ KinesisProducer, KinesisProducerConfiguration }
 import com.redis.RedisClient
 import controllers.ProtoUtils.protoParser
+import org.apache.kafka.clients.producer.{ KafkaProducer, ProducerRecord }
+import org.apache.kafka.common.serialization.{ ByteArraySerializer, StringSerializer }
 import play.api.mvc._
 import votes.votes.Vote
 
 
 class RootController extends Controller {
-  val kinesis = new KinesisProducer(new KinesisProducerConfiguration().setRegion("us-west-2"))
+  val kafka: KafkaProducer[String, Array[Byte]] = {
+    import scala.collection.JavaConverters._
+    new KafkaProducer(Map[String, Object](
+      "bootstrap.servers" -> "10.0.1.201:32768"
+    ).asJava, new StringSerializer, new ByteArraySerializer)
+  }
 
   def index = Action {
-    Ok(views.html.index()).withSession("userid" -> UUID.randomUUID().toString)
+    request =>
+      Ok(views.html.index()).withSession(
+        request.session + ("userid" -> UUID.randomUUID().toString))
   }
+
+  val allowMultiple = true
 
   def submit = Action(protoParser[Vote]) {
     request =>
-      val userId = request.session("userid")
-      val voteWithSession = request.body.update(_.userId := userId)
+      if (request.session.get("voted").isEmpty || allowMultiple) {
+        val userId = request.session("userid")
+        val voteWithSession = request.body.update(_.userId := userId)
 
-      kinesis.addUserRecord(
-        "proto-demo2", userId,
-        ByteBuffer.wrap(request.body.toByteArray))
+        kafka.send(new ProducerRecord("moishe", "xyz", voteWithSession.toByteArray))
+        Ok("").withSession(request.session + ("voted" -> "1"))
+      } else {
+        Conflict("Already voted.")
+      }
 
-      Ok("foo")
   }
 
   def statsIndex = Action {

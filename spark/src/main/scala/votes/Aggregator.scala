@@ -1,40 +1,39 @@
-import com.amazonaws.services.kinesis.clientlibrary.lib.worker.InitialPositionInStream
-import com.amazonaws.services.kinesis.model.Record
 import com.redis.RedisClient
+import org.apache.kafka.clients.consumer.ConsumerRecord
+import org.apache.kafka.common.serialization.{ ByteArrayDeserializer, StringDeserializer }
 import org.apache.spark._
 import org.apache.spark.rdd.RDD
-import org.apache.spark.storage.StorageLevel
 import org.apache.spark.streaming._
-import org.apache.spark.streaming.dstream.ReceiverInputDStream
-import org.apache.spark.streaming.kinesis.KinesisUtils
+import org.apache.spark.streaming.kafka010.{ ConsumerStrategies, KafkaUtils, LocationStrategies }
 import votes.votes.Aggregate.Item
-import votes.votes.{ Aggregate, Vote }
 import votes.votes.Vote.Language
+import votes.votes.{ Aggregate, Vote }
 
-object ProtoDemo {
-
-  def messageHandler(record: Record): Vote = {
-    try {
-      Vote.parseFrom(record.getData.array())
-    } catch {
-      case e: com.google.protobuf.InvalidProtocolBufferException => Vote()
-    }
-  }
+object Aggregator {
+  val CheckpointDir = "/tmp/chkp"
 
   def createContext() = {
     val conf = new SparkConf().setAppName("mything").setMaster("local[8]")
-    conf.set("spark.kryo.registrationRequired", "true")
-    conf.set("spark.serializer", "org.apache.spark.serializer.JavaSerializer")
-
     conf.set("spark.streaming.receiver.writeAheadLog.enable", "true")
 
     val ssc = new StreamingContext(conf, Seconds(1))
-    ssc.checkpoint("/tmp/chkp")
+    ssc.checkpoint(CheckpointDir)
 
-    val votes: ReceiverInputDStream[Vote] = KinesisUtils.createStream(
-      ssc, "ProtoDemo7", "proto-demo2", "https://kinesis.us-west-2.amazonaws.com",
-      "us-west-2", InitialPositionInStream.TRIM_HORIZON, Seconds(60),
-      StorageLevel.MEMORY_AND_DISK_2, messageHandler)
+    val votes = {
+      val kafkaParams = Map[String, Object](
+        "bootstrap.servers" -> "localhost:32768",
+        "key.deserializer" -> classOf[StringDeserializer],
+        "value.deserializer" -> classOf[ByteArrayDeserializer],
+        "group.id" -> "demo",
+        "enable.auto.commit" -> (false: java.lang.Boolean))
+      val str = KafkaUtils.createDirectStream[String, Array[Byte]](ssc, LocationStrategies.PreferConsistent,
+        ConsumerStrategies.Subscribe[String, Array[Byte]](Array("moishe"), kafkaParams))
+
+      str.map {
+        (cr: ConsumerRecord[String, Array[Byte]]) =>
+          Vote.parseFrom(cr.value())
+      }
+    }
 
     val votesByLanguageAge = votes.map {
       v => ((v.language, v.age / 10 * 10), v)
@@ -64,14 +63,8 @@ object ProtoDemo {
   }
 
 
-  /*
-  val votesByUserId = votes.map {
-    v => (v.userId, v)
-  }.groupByKey()
-  */
-
   def main(args: Array[String]): Unit = {
-    val ssc = StreamingContext.getOrCreate("/tmp/chkp", () => createContext())
+    val ssc = StreamingContext.getOrCreate(CheckpointDir, () => createContext())
 
     ssc.start()
     ssc.awaitTermination()

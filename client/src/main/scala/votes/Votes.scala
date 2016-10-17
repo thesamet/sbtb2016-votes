@@ -38,7 +38,8 @@ object VotesMain extends js.JSApp {
     val e = div(
       p("What is your least favorite language?"),
 
-      for (v <- Language.values) yield div(`class` := "radio",
+      for (v <- Language.values) yield div(
+        `class` := "radio",
         label(
           input(`type` := "radio", name := "language", onclick := {_: Event => updateLanguage(v) }), v.name
         )),

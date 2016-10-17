@@ -5,10 +5,11 @@ lazy val server = project.settings(
   scalaJSProjects := Seq(client),
   pipelineStages in Assets := Seq(scalaJSPipeline),
   compile in Compile <<= (compile in Compile) dependsOn scalaJSPipeline,
+  resolvers += Resolver.url("cake", url("https://dl.bintray.com/cakesolutions/maven")),
   libraryDependencies ++= Seq(
     "com.vmunier" %% "scalajs-scripts" % "1.0.0",
-    "com.amazonaws" % "amazon-kinesis-producer" % "0.12.1",
-    "net.debasishg" %% "redisclient" % "3.2"
+    "net.debasishg" %% "redisclient" % "3.2",
+    "org.apache.kafka" % "kafka-clients" % "0.10.0.1"
   )
 ).enablePlugins(PlayScala)
   .dependsOn(sharedJvm)
@@ -42,7 +43,7 @@ lazy val sharedJs = shared.js
 lazy val spark = project.settings(
   libraryDependencies ++= Seq(
     "org.apache.spark" %% "spark-streaming" % "2.0.1",
-    "org.apache.spark" %% "spark-streaming-kinesis-asl" % "2.0.1",
+    "org.apache.spark" %% "spark-streaming-kafka-0-10" % "2.0.1",
     "net.debasishg" %% "redisclient" % "3.2"
   )
 ).dependsOn(sharedJvm)
