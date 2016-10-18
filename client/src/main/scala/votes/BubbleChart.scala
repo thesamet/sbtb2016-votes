@@ -34,6 +34,10 @@ class BubbleChart(canvas: Element) {
           )
         )),
         "yAxes" -> js.Array(literal(
+          "scaleLabel" -> literal(
+            "display" -> true,
+            "labelString" -> "Age"
+          ),
           "ticks" -> literal(
             "min" -> -20,
             "stepSize" -> 10
