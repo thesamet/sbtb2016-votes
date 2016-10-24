@@ -21,7 +21,7 @@ object Aggregator {
 
     val votes = {
       val kafkaParams = Map[String, Object](
-        "bootstrap.servers" -> "localhost:32768",
+        "bootstrap.servers" -> "localhost:9092",
         "key.deserializer" -> classOf[StringDeserializer],
         "value.deserializer" -> classOf[ByteArrayDeserializer],
         "group.id" -> "demo",

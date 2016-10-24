@@ -14,7 +14,7 @@ class RootController extends Controller {
   val kafka: KafkaProducer[String, Array[Byte]] = {
     import scala.collection.JavaConverters._
     new KafkaProducer(Map[String, Object](
-      "bootstrap.servers" -> "10.0.1.201:32768"
+      "bootstrap.servers" -> "localhost:9092"
     ).asJava, new StringSerializer, new ByteArraySerializer)
   }
 

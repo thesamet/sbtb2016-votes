@@ -29,7 +29,7 @@ class BubbleChart(canvas: Element) {
             "callback" -> {
               (value: Number) =>
                 val intValue = value.intValue()
-                if (intValue > 0 && intValue <= LanguageMaxValue) votes.Vote.Language.fromValue(intValue).name else ""
+                if (intValue >= 0 && intValue <= LanguageMaxValue) votes.Vote.Language.fromValue(intValue).name else ""
             }
           )
         )),
