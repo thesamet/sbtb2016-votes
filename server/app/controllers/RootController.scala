@@ -32,7 +32,7 @@ class RootController extends Controller {
         val userId = request.session("userid")
         val voteWithSession = request.body.update(_.userId := userId)
 
-        kafka.send(new ProducerRecord("moishe", "xyz", voteWithSession.toByteArray))
+        kafka.send(new ProducerRecord("votes", "xyz", voteWithSession.toByteArray))
         Ok("").withSession(request.session + ("voted" -> "1"))
       } else {
         Conflict("Already voted.")

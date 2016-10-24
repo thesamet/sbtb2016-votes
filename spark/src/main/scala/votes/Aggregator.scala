@@ -27,7 +27,7 @@ object Aggregator {
         "group.id" -> "demo",
         "enable.auto.commit" -> (false: java.lang.Boolean))
       val str = KafkaUtils.createDirectStream[String, Array[Byte]](ssc, LocationStrategies.PreferConsistent,
-        ConsumerStrategies.Subscribe[String, Array[Byte]](Array("moishe"), kafkaParams))
+        ConsumerStrategies.Subscribe[String, Array[Byte]](Array("votes"), kafkaParams))
 
       str.map {
         (cr: ConsumerRecord[String, Array[Byte]]) =>
