@@ -24,20 +24,23 @@ class RootController extends Controller {
         request.session + ("userid" -> UUID.randomUUID().toString))
   }
 
-  val allowMultiple = true
+  val allowMultiple = false
 
   def submit = Action(protoParser[Vote]) {
     request =>
-      if (request.session.get("voted").isEmpty || allowMultiple) {
+      if (request.session.get("voted").isDefined && !allowMultiple) {
+        Conflict("Already voted.")
+      } else if (request.body.age > 120 || request.body.age <= 0) {
+        BadRequest("Age not in range.")
+      } else if (request.body.language.isUnknown) {
+        BadRequest("Please select a language.")
+      } else {
         val userId = request.session("userid")
         val voteWithSession = request.body.update(_.userId := userId)
 
         kafka.send(new ProducerRecord("votes", "xyz", voteWithSession.toByteArray))
-        Ok("").withSession(request.session + ("voted" -> "1"))
-      } else {
-        Conflict("Already voted.")
+        Ok("Thank you!").withSession(request.session + ("voted" -> "1"))
       }
-
   }
 
   def statsIndex = Action {

@@ -6,10 +6,11 @@ message Vote {
   int32 age = 1;
 
   enum Language {
-    CPP = 0;
-    VBSCRIPT = 1;
-    PHP = 2;
-    PYTHON = 3;
+    UNKNOWN = 0;
+    CPP = 1;
+    VBSCRIPT = 2;
+    PHP = 3;
+    PYTHON = 4;
   }
 
   Language language = 2;

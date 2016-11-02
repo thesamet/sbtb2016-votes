@@ -23,13 +23,13 @@ class BubbleChart(canvas: Element) {
       "scales" -> literal(
         "xAxes" -> js.Array(literal(
           "ticks" -> literal(
-            "min" -> -1,
+            "min" -> 0,
             "max" -> (1 + LanguageMaxValue),
             "stepSize" -> 1,
             "callback" -> {
               (value: Number) =>
                 val intValue = value.intValue()
-                if (intValue >= 0 && intValue <= LanguageMaxValue) votes.Vote.Language.fromValue(intValue).name else ""
+                if (intValue >= 1 && intValue <= LanguageMaxValue) votes.Vote.Language.fromValue(intValue).name else ""
             }
           )
         )),
