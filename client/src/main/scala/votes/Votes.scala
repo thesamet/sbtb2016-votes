@@ -26,9 +26,6 @@ object VotesMain extends js.JSApp {
       vote = vote.update(_.language := language)
     }
 
-    elem.onkeyup = updateAge _
-    elem.onchange = updateAge _
-
     def submitForm(e: Event) = {
       e.preventDefault()
       val xhr = new dom.XMLHttpRequest()
@@ -42,13 +39,19 @@ object VotesMain extends js.JSApp {
       xhr.send(t)
     }
 
+    elem.onkeyup = updateAge _
+    elem.onchange = updateAge _
+
     val e = form(
       label("What is your least favorite language?"),
 
       for (v <- Language.values.filterNot(_.isUnknown)) yield div(
         `class` := "radio",
         label(
-          input(`type` := "radio", name := "language", onclick := {_: Event => updateLanguage(v) }), v.name
+          input(
+            `type` := "radio",
+            name := "language",
+            onclick := {_: Event => updateLanguage(v) }), v.name
         )),
 
       div(`class` := "form-group",
@@ -60,7 +63,5 @@ object VotesMain extends js.JSApp {
     )
 
     dom.document.getElementById("target").appendChild(e.render)
-
-    val v = votes.Vote(age = 35, language = votes.Vote.Language.PHP)
   }
 }
