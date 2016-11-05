@@ -18,11 +18,3 @@ message Vote {
   string user_id = 3;
 }
 
-message Aggregate {
-  message Item {
-    Vote.Language language = 1;
-    int32 age = 2;
-    int32 count = 3;
-  }
-  repeated Item items = 1;
-}

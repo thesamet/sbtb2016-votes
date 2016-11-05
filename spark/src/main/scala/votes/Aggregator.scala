@@ -35,28 +35,6 @@ object Aggregator {
         Vote.parseFrom(cr.value())
     }
 
-    val votesByLanguageAge = votes.map {
-      v => ((v.language, v.age / 10 * 10), v)
-    }
-
-    val voteCounts = votesByLanguageAge.updateStateByKey[Int] {
-      (votes: Seq[Vote], currentStat: Option[Int]) => Some(currentStat.getOrElse(0) + votes.size)
-    }
-
-    voteCounts.foreachRDD {
-      r: RDD[((Language, Int), Int)] =>
-        val items = r.collect.map {
-          case ((language, age), count) =>
-            Aggregate.Item().update(
-              _.language := language,
-              _.age := age,
-              _.count := count)
-        }
-        val a = Aggregate(items = items)
-        val c = new RedisClient()
-        c.set(s"stats", a.toByteArray)
-        c.disconnect
-    }
     ssc
   }
 

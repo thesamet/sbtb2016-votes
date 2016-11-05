@@ -22,22 +22,8 @@ class RootController extends Controller {
         request.session + ("userid" -> UUID.randomUUID().toString))
   }
 
-  def submit = Action(protoParser[Vote]) {
+  def submit = Action {
     request =>
-      val vote: Vote = request.body
-
-      if (request.session.get("voted").isDefined) {
-        Conflict("Already voted.")
-      } else if (vote.age > 120 || vote.age <= 0) {
-        BadRequest("Age not in range.")
-      } else if (vote.language.isUnknown) {
-        BadRequest("Please select a language.")
-      } else {
-        val userId = request.session("userid")
-        val voteWithSession = vote.update(_.userId := userId)
-
-        kafka.send(new ProducerRecord("votes", "", voteWithSession.toByteArray))
-        Ok("Thank you!").withSession(request.session + ("voted" -> "1"))
-      }
+      Ok("")
   }
 }
