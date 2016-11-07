@@ -6,8 +6,9 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.streaming._
 import org.apache.spark.streaming.dstream.DStream
 import org.apache.spark.streaming.kafka010.{ ConsumerStrategies, KafkaUtils, LocationStrategies }
+import votes.agg.Aggregate
 import votes.votes.Vote.Language
-import votes.votes.{ Aggregate, Vote }
+import votes.votes.Vote
 
 object Aggregator {
   val CheckpointDir = "/tmp/chkp"

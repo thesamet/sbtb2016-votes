@@ -5,17 +5,11 @@ import org.scalajs.dom.raw.{ Event, HTMLInputElement }
 
 import scala.scalajs.js
 import scala.scalajs.js.JSApp
-import scala.scalajs.js.JSConverters._
 import scala.util.Try
+import agg.Aggregate
+import scala.scalajs.js.JSConverters._
 
 object Stats extends JSApp {
-  def main(): Unit = {
-  }
-}
-
-/*
-object Stats extends JSApp {
-  import votes.Aggregate
   val canvas = dom.document.getElementById("myChart")
   val chart = new BubbleChart(canvas)
   var oldAgg: Aggregate = null  // for change tracking.
@@ -50,4 +44,3 @@ object Stats extends JSApp {
     }, 1000.0)
   }
 }
-*/
