@@ -6,7 +6,7 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.streaming._
 import org.apache.spark.streaming.dstream.DStream
 import org.apache.spark.streaming.kafka010.{ ConsumerStrategies, KafkaUtils, LocationStrategies }
-import votes.agg.Aggregate
+import votes.agg.SurveyResult
 import votes.votes.Vote.Language
 import votes.votes.Vote
 
@@ -46,14 +46,14 @@ object Aggregator {
 
     voteCounts.foreachRDD {
       r: RDD[((Language, Int), Int)] =>
-        val items = r.collect.map {
+        val buckets = r.collect.map {
           case ((language, age), count) =>
-            Aggregate.Item().update(
+            SurveyResult.Bucket().update(
               _.language := language,
               _.age := age,
               _.count := count)
         }
-        val a = Aggregate(items = items)
+        val a = SurveyResult(buckets = buckets)
         val c = new RedisClient()
         c.set(s"stats", a.toByteArray)
         c.disconnect

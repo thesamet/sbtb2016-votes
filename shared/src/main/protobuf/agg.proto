@@ -4,11 +4,13 @@ package votes;
 
 import "votes.proto";
 
-message Aggregate {
-    message Item {
+message SurveyResult {
+
+    message Bucket {
         Vote.Language language = 1;
         int32 age = 2;
         int32 count =3;
     }
-    repeated Item items = 1;
+
+    repeated Bucket buckets = 1;
 }
