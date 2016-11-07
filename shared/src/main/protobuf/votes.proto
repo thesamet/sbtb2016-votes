@@ -2,19 +2,5 @@ syntax = "proto3";
 
 package votes;
 
-message Vote {
-  int32 age = 1;
 
-  enum Language {
-    UNKNOWN = 0;
-    CPP = 1;
-    VBSCRIPT = 2;
-    PHP = 3;
-    PYTHON = 4;
-  }
-
-  Language language = 2;
-
-  string user_id = 3;
-}
 
