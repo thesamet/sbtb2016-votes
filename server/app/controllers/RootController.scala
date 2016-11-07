@@ -24,6 +24,6 @@ class RootController extends Controller {
 
   def submit = Action {
     request =>
-      Ok("")
+      Ok("Not implemented yet!")
   }
 }
