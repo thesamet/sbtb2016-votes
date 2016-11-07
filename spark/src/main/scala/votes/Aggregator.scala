@@ -27,23 +27,30 @@ object Aggregator {
       "group.id" -> "demo",
       "enable.auto.commit" -> (false: java.lang.Boolean))
 
+    // Stream of votes from Kafka as bytes
     val votesAsBytes = KafkaUtils.createDirectStream[String, Array[Byte]](
       ssc, LocationStrategies.PreferConsistent,
       ConsumerStrategies.Subscribe[String, Array[Byte]](Array("votes"), kafkaParams))
 
+    // Parse them into Vote case class.
     val votes: DStream[Vote] = votesAsBytes.map {
       (cr: ConsumerRecord[String, Array[Byte]]) =>
         Vote.parseFrom(cr.value())
     }
 
+    // Round down the age to a multiple of ten. The key is
+    // (language, age) the value is the count.
     val votesByLanguageAge = votes.map {
       v => ((v.language, v.age / 10 * 10), v)
     }
 
+    // Aggregate the vote count for each key.
     val voteCounts = votesByLanguageAge.updateStateByKey[Int] {
-      (votes: Seq[Vote], currentStat: Option[Int]) => Some(currentStat.getOrElse(0) + votes.size)
+      (votes: Seq[Vote], currentStat: Option[Int]) =>
+        Some(currentStat.getOrElse(0) + votes.size)
     }
 
+    // Save in Redis.
     voteCounts.foreachRDD {
       r: RDD[((Language, Int), Int)] =>
         val buckets = r.collect.map {
