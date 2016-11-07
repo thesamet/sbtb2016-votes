@@ -22,7 +22,7 @@ class RootController extends Controller {
         request.session + ("userid" -> UUID.randomUUID().toString))
   }
 
-  def submit = Action {
+  def submit = Action(protoParser[Vote]) {
     request =>
       Ok("Not implemented yet!")
   }
