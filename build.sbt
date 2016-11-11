@@ -6,6 +6,8 @@ lazy val server = project.settings(
   pipelineStages in Assets := Seq(scalaJSPipeline),
   compile in Compile <<= (compile in Compile) dependsOn scalaJSPipeline,
   resolvers += Resolver.url("cake", url("https://dl.bintray.com/cakesolutions/maven")),
+  sources in (Compile,doc) := Seq.empty,
+  publishArtifact in (Compile, packageDoc) := false,
   libraryDependencies ++= Seq(
     "com.vmunier" %% "scalajs-scripts" % "1.0.0",
     "net.debasishg" %% "redisclient" % "3.2",
@@ -33,7 +35,9 @@ lazy val shared = (crossProject.crossType(CrossType.Pure) in file("shared"))
     libraryDependencies ++= Seq(
       "com.trueaccord.scalapb" %%% "scalapb-runtime" % "0.5.43",
       "com.trueaccord.scalapb" %%% "scalapb-runtime" % "0.5.43" % "protobuf"
-    )
+    ),
+    sources in (Compile,doc) := Seq.empty,
+    publishArtifact in (Compile, packageDoc) := false
   ).jsConfigure(_.enablePlugins(ScalaJSWeb))
 
 lazy val sharedJvm = shared.jvm
