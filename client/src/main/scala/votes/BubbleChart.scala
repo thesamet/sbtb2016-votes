@@ -39,7 +39,7 @@ class BubbleChart(canvas: Element) {
             "labelString" -> "Age"
           ),
           "ticks" -> literal(
-            "min" -> -20,
+            "min" -> -10,
             "stepSize" -> 10
           )
         ))
