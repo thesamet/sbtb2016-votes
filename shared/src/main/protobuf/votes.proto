@@ -2,5 +2,17 @@ syntax = "proto3";
 
 package votes;
 
+message Vote {
+    enum Language {
+        UNKNOWN = 0;
+        ASSEMBLY = 1;
+        ERLANG = 2;
+        LISP = 3;
+        BASH = 4;
+        HASKELL = 5;
+    }
+    Language language = 1;
+    int32 age = 2;
+}
 
 

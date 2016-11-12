@@ -24,6 +24,14 @@ class RootController extends Controller {
 
   def submit = Action(protoParser[Vote]) {
     request =>
-      BadRequest("Not implemented yet!")
+      val v: Vote = request.body
+      if (v.language.isUnknown) {
+        BadRequest("Pick a language.")
+      } else if (v.age <= 0 || v.age>120) {
+        BadRequest("Invalid age")
+      } else {
+        kafka.send(new ProducerRecord("votes", "", v.toByteArray))
+        Ok("Thank you!")
+      }
   }
 }
