@@ -24,6 +24,6 @@ class RootController extends Controller {
 
   def submit = Action(protoParser[Vote]) {
     request =>
-      Ok("Not implemented yet!")
+      BadRequest("Not implemented yet!")
   }
 }

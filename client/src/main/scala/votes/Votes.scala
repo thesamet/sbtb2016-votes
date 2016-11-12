@@ -35,6 +35,9 @@ object VotesMain extends js.JSApp {
       xhr.onload = {
         e: Event  =>
           statusElem.textContent = xhr.responseText
+          if (xhr.status == 200) {
+            dom.document.getElementById("submitBtn").setAttribute("disabled", "true")
+          }
       }
       xhr.send(t)
     }
@@ -59,7 +62,10 @@ object VotesMain extends js.JSApp {
         elem),
 
       statusElem,
-      input(`type` := "submit", `class` := "btn btn-default btn-primary", onclick := submitForm _)
+
+      input(`type` := "submit", id := "submitBtn",
+        `class` := "btn btn-default btn-primary",
+        onclick := submitForm _)
     )
 
     dom.document.getElementById("target").appendChild(e.render)
